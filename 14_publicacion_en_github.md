@@ -361,8 +361,19 @@ jobs:
 | **build** | 20:03:12 → 20:04:29 | 1 min 17 s | Clonar repositorio · Instalar Quarto · Instalar Python 3.10 · Instalar paquetes · **Renderizar dashboard** · Configurar Pages · Subir el sitio |
 | **deploy** | 20:04:33 → 20:05:03 | 30 s | Desplegar en GitHub Pages |
 
-**Unos 2 minutos del push al sitio publicado.** Para verlo: pestaña **Actions** del repositorio →
-clic en la ejecución → cada *job* muestra sus pasos con ✓ y el tiempo de cada uno.
+**Unos 2 minutos del push al sitio publicado** (GitHub reporta *Total duration* 1 min 56 s). El
+*artifact* `github-pages`, con el sitio empaquetado, pesó 2.98 MB. Para verlo: pestaña **Actions**
+del repositorio → clic en la ejecución → cada *job* muestra sus pasos con ✓ y el tiempo de cada uno.
+
+La ejecución muestra además cuatro **anotaciones**, que no son errores:
+- ⚠ *Node.js 20 is deprecated…* (una en cada *job*): `configure-pages@v5`, `setup-python@v5`,
+  `deploy-pages@v4` y la `upload-artifact` que usa internamente `upload-pages-artifact@v4` se
+  programaron para una versión de Node.js que GitHub está retirando. GitHub ya las corre con
+  Node.js 24 y funcionan. Se resuelve subiendo cada acción a su siguiente versión mayor cuando esté
+  disponible.
+- ℹ *The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026*: aviso de que la
+  máquina virtual cambiará de versión, después de la exposición. Si algún día fallara por eso, se
+  fija la versión con `runs-on: ubuntu-24.04`.
 
 ## 14.10 Paso 8: verificar
 
@@ -477,9 +488,12 @@ git status -sb                                    # ## main...origin/main
 
 - **Las dos ejecuciones viejas del flujo** (#35808804918 y #35809813982) siguen en la pestaña
   Actions y enlazan a los commits viejos. GitHub puede mostrar un commit que ya no está en ninguna
-  rama si alguien entra por su enlace directo. Para cerrar ese hueco se borran esas ejecuciones:
-  **Actions → clic en la ejecución → menú ⋯ (arriba a la derecha) → Delete workflow run**. Lo hace
-  el dueño del repositorio.
+  rama si alguien entra por su enlace directo. Para cerrar ese hueco se borran esas ejecuciones.
+  Lo hace el dueño del repositorio: **Actions → en la lista de ejecuciones, el menú ⋯ al final de
+  la fila → Delete workflow run → Yes, permanently delete this workflow run**. Borrar la ejecución
+  también borra su *artifact* (la copia vieja del sitio). **Ojo:** dentro de una ejecución, el menú
+  ⋯ solo ofrece *Delete all logs*, que borra los registros pero deja la ejecución y su enlace al
+  commit.
 - En la computadora, los commits viejos siguen accesibles con `git reflog` (respaldo local) al
   menos 30 días; después, Git los elimina solo en su limpieza periódica.
 - **Límite honesto:** reescribir el historial no borra copias que alguien ya haya descargado. Aquí el
@@ -579,6 +593,8 @@ mismos tres pasos finales de Pages.
 | `ModuleNotFoundError` en Actions | Falta un paquete en `requirements.txt` | Agregarlo y volver a subir (en R: agregarlo a `install.packages`) |
 | Funciona local pero falla en Actions | Ruta absoluta, archivo que no se subió, paquete no declarado | Rutas relativas; revisar `git ls-files`; declarar paquetes |
 | La página da 404 justo después del despliegue | Tarda uno o dos minutos en propagarse, o el navegador muestra una versión guardada | Esperar y recargar con Ctrl + F5 |
+| Anotación amarilla *Node.js 20 is deprecated* | Acciones programadas para una versión de Node.js que GitHub retira | No es un error: el flujo termina bien. Actualizar la versión mayor de cada acción cuando exista |
+| En la ejecución, el menú ⋯ no tiene *Delete workflow run* | Esa opción está en la **lista** de ejecuciones, no dentro de la ejecución | Volver a Actions y usar el ⋯ al final de la fila |
 | `LF will be replaced by CRLF` | Diferente fin de línea entre Windows y Linux | Es solo un aviso; no hay que hacer nada |
 | `CÃ©sar` en lugar de `César` | PowerShell muestra mal los acentos | Solo afecta la vista; lo guardado está bien |
 | La carpeta `.github` no aparece con `ls` | Es una carpeta que empieza con punto | `ls -Force` (PowerShell) o `ls -a` (Git Bash) |
