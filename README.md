@@ -1,23 +1,8 @@
-# Guía de estudio · Proyecto 1: Fútbol y mercados de apuestas
-
-> **Repositorio privado del equipo.** Contiene la justificación de todas las decisiones, la
-> explicación del código, el material para la exposición y los pendientes internos. No se
-> comparte fuera del equipo. El proyecto público vive en otro repositorio.
+# Guía de estudio · Proyecto: Fútbol y mercados de apuestas
 
 - **Dashboard (público):** https://pitirringo.github.io/futbol-apuestas/
 - **Repositorio del proyecto (público):** https://github.com/pitirringo/futbol-apuestas
-- **Entrega del reporte:** por correo antes del **lunes 28 de septiembre de 2026**, con la lista de integrantes.
 - **Exposición:** 1 o 6 de octubre, 18:00–20:00. **5 minutos** + **2 preguntas** que pueden hacerle a **cualquier integrante**, sobre cualquier parte (datos, limpieza, modelo, código, tablero, publicación).
-
-## Para qué sirve esta guía
-
-Las instrucciones del proyecto dicen que "cualquier integrante debe poder explicar cómo se
-obtuvieron los datos, cómo se limpiaron, por qué se usó cierto modelo, cómo se evaluó, qué
-significa el resultado, cómo se construyó la visualización, cuáles son las principales
-limitaciones" y que "una persona que no pueda explicar las decisiones metodológicas o analíticas
-del proyecto podrá obtener una calificación individual diferente". Esta guía está escrita para
-que **cualquiera del equipo pueda estudiar todo el proyecto desde cero**: la teoría, el código
-línea por línea (con su equivalente en R, el lenguaje del diplomado) y los resultados.
 
 ## Contenido
 
@@ -45,7 +30,7 @@ línea por línea (con su equivalente en R, el lenguaje del diplomado) y los res
 | — | [Equivalencias en R](equivalencias_R/README.md) | Scripts de R que reproducen el análisis y dan **las mismas cifras** que Python | "¿Cómo se haría esto en R?" |
 | — | [Archivo](archivo/README.md) | Primeras versiones (`DECISIONES_v1.md`, `GUIA_DEFENSA_v1.md`), ya reemplazadas por los capítulos | — |
 
-## Ruta de estudio sugerida
+## Ruta de estudio sugerida (aprox. 6 horas)
 
 1. **Día 1 (1 hora):** capítulos 1, 2 y 12. Con eso ya puedes explicar qué se hizo y qué se encontró.
 2. **Día 2 (2 horas):** capítulos 4 a 9, la teoría. Lee los ejemplos numéricos con lápiz.
@@ -68,23 +53,8 @@ línea por línea (con su equivalente en R, el lenguaje del diplomado) y los res
 | Brecha M0 − mercado | +0.012 con validación + prueba (IC 95 %: +0.002 a +0.022): pequeña pero real |
 | Ejemplo | Arsenal–Man City: 45.8 % / 25.0 % / 29.3 %, marcador más probable 1–1 |
 
-## Cómo obtener y actualizar esta guía
 
-El repositorio es **privado**: solo lo ven su dueño y los integrantes invitados como colaboradores.
 
-```bash
-git clone https://github.com/pitirringo/futbol-apuestas-defensa.git   # la primera vez
-git pull                                                              # para traer cambios
-```
-
-Sin Git, también se puede descargar desde la página del repositorio con **Code → Download ZIP**.
-Los archivos `.md` se leen directamente en GitHub, con tablas, fórmulas y preguntas desplegables.
-El paso a paso para subir cambios está en el [capítulo 14](14_publicacion_en_github.md#1414-cómo-trabajar-de-aquí-en-adelante-ambos-repositorios).
-
-## Cómo correr los scripts de R
-
-Clona este repositorio **junto** al repositorio público (en la misma carpeta) o simplemente
-córrelos con internet: si no encuentran los datos en disco, los descargan del repositorio público.
 
 ```r
 # desde la carpeta de este repositorio, en este orden (el 03 usa un archivo que genera el 02)
@@ -95,5 +65,4 @@ source("equivalencias_R/04_grafica_resumen.R")
 source("equivalencias_R/05_variables_previas.R")
 ```
 
-Necesitan `readr`, `dplyr` y `ggplot2` (todo viene en `tidyverse`). Qué debe imprimir cada uno:
-[equivalencias_R/README.md](equivalencias_R/README.md).
+
