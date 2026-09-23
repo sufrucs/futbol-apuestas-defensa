@@ -2,9 +2,7 @@
 
 [← Guion](16_guion_exposicion.md) · [Índice](README.md) · [Siguiente: hallazgos y pendientes →](18_hallazgos_y_pendientes.md)
 
-**Cómo usarlo:** lee la pregunta, contéstala **en voz alta** y solo después abre la respuesta (clic
-en la flecha). Al final de cada respuesta está el capítulo donde se explica a fondo. Las
-respuestas están pensadas para decirse en 30–45 segundos.
+
 
 **Temas:** [A. Proyecto](#a-el-proyecto) · [B. Datos y limpieza](#b-datos-y-limpieza) ·
 [C. Elo](#c-elo) · [D. Shrinkage y forma](#d-promedios-ajustados-y-forma-reciente) ·
