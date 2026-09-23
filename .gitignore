@@ -1,0 +1,14 @@
+# Se genera al correr equivalencias_R/02_modelo_poisson.R (lo usa 03_mercado.R)
+equivalencias_R/probabilidades_prueba.rds
+
+# Sesiones de R y RStudio
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/
+
+# Archivos del sistema operativo
+.DS_Store
+._*
+Thumbs.db
+desktop.ini
