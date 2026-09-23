@@ -3,10 +3,9 @@
 [← Limitaciones](15_limitaciones_y_extensiones.md) · [Índice](README.md) · [Siguiente: banco de preguntas →](17_banco_de_preguntas.md)
 
 **Formato:** 5 minutos de exposición (problema, datos, análisis y modelado, resultados y
-conclusión) y después **2 preguntas que pueden hacerle a cualquier integrante**. El tablero es el
-apoyo visual: no hacen falta diapositivas.
+conclusión) y después **2 preguntas que pueden hacerle a cualquier integrante**. 
 
-## 16.1 El guion en una tabla
+## 16.1 Esbozo de la expo
 
 | Tiempo | Parte | Página del tablero | Qué señalar |
 |---|---|---|---|
@@ -17,7 +16,7 @@ apoyo visual: no hacen falta diapositivas.
 | 4:00–4:40 | **Conclusión y limitaciones** | Resumen | Tarjeta "Lectura en 20 segundos" |
 | 4:40–5:00 | **Cierre con demostración** | Explora un partido | Arsenal contra Man City |
 
-## 16.2 El texto sugerido (≈ 630 palabras ≈ 4 min 50 s)
+## 16.2 Resumen esbozo
 
 Es una guía, no un texto para leer. Lo que va entre **[corchetes]** es la acción en el tablero; lo
 marcado *(opcional)* se omite si van atrasados.
@@ -88,61 +87,5 @@ marcado *(opcional)* se omite si van atrasados.
 > modelo da 46 % para Arsenal, 25 % de empate y 29 % para el City, y el marcador más probable es
 > 1–1. Todo está publicado y se puede reproducir desde el repositorio. Gracias.
 
-## 16.3 ¿Quién habla? (dos opciones)
 
-| Opción | Cómo | Ventaja |
-|---|---|---|
-| **A. Una voz + un operador** | Una persona expone todo; otra maneja el tablero | Ritmo uniforme, cero cambios de turno |
-| **B. Cinco voces + un operador** | Una persona por parte (problema, datos, modelado, resultados, conclusión con cierre); la sexta maneja el tablero | Todos participan; ≈ 1 minuto cada quien |
 
-En la opción B, las transiciones pueden ser: "…y para esto usamos estos datos, que les presenta
-[nombre]". **Aunque se repartan las partes, cualquiera puede recibir cualquier pregunta:** todos
-deben estudiar todo.
-
-## 16.4 Antes de exponer
-
-**El día anterior**
-- [ ] Ensayar dos veces con cronómetro: debe quedar entre 4:30 y 5:00.
-- [ ] Cada quien lee los capítulos 1, 12 y 15, y se tapa las respuestas del [banco de preguntas](17_banco_de_preguntas.md).
-- [ ] Preparar el **respaldo sin internet** (abajo).
-
-**15 minutos antes**
-- [ ] Abrir https://pitirringo.github.io/futbol-apuestas/ en la computadora del salón y recargar con **Ctrl + F5**.
-- [ ] Pasar por las 6 páginas para que carguen las gráficas y el simulador.
-- [ ] Zoom del navegador de 90 a 100 %. Con proyector de 1280 px el tablero está probado.
-- [ ] Dejar abierta la página **Resumen** y, en otra pestaña, el repositorio (por si preguntan por el código).
-
-**Respaldo sin internet**
-1. En una computadora con el proyecto: `quarto render Dashboard-o-pagina` genera `_site/`.
-2. Servirlo en local y abrir `http://localhost:8000`:
-   ```bash
-   python -m http.server 8000 --directory Dashboard-o-pagina/_site
-   ```
-   Es mejor servirlo así que abrir `index.html` con doble clic, porque algunos navegadores bloquean
-   el simulador cuando la página se abre como archivo.
-3. Último recurso: capturas de pantalla de las 6 páginas en un PDF.
-
-## 16.5 Cómo contestar las 2 preguntas
-
-**Respuesta en tres tiempos (30–45 segundos):**
-1. **Respuesta directa** en una frase.
-2. **Evidencia:** un número o una gráfica ("se ve en la página *El modelo*…").
-3. **Matiz o limitación**, si aplica.
-
-**Ejemplo.** "¿Por qué usaron LogLoss?"
-> "Porque evalúa las probabilidades completas, no solo si acertamos. **(directa)** Por ejemplo, el
-> modelo y el mercado aciertan casi lo mismo, 48 y 49 %, pero el LogLoss sí distingue quién asigna
-> mejor la probabilidad: 1.031 contra 1.020. **(evidencia)** Los aciertos los mostramos solo como
-> traducción intuitiva. **(matiz)**"
-
-**Si no sabes la respuesta:** no inventes cifras. Di lo que sí sabes y cómo lo verificarías. Por
-ejemplo: "No lo medimos directamente; lo que sí medimos es… y lo comprobaríamos con…". Los
-compañeros **no** deben interrumpir, salvo que el jurado lo permita.
-
-**Frases útiles**
-- "Es una asociación, no una relación causal."
-- "La diferencia está dentro del ruido: el intervalo bootstrap incluye el cero."
-- "Eso queda como extensión; lo que sí hicimos fue…"
-- "Lo pueden ver en la pestaña *Reproducibilidad*: las 15 cifras coinciden."
-
-**Qué no decir:** ver la tabla "Qué decir y qué NO decir" del [capítulo 12](12_resultados.md#125-qué-decir-y-qué-no-decir).
