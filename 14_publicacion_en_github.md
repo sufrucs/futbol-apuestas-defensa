@@ -407,73 +407,7 @@ repositorio → **About → engrane ⚙ → Use your GitHub Pages website → Sa
 justo debajo del campo *Website*; si la ventana es angosta, *About* aparece debajo de la lista de
 archivos. Si la casilla no aparece, se escribe la URL a mano en *Website*.
 
-## 14.12 Paso 10: separar el material de defensa y reescribir el historial
 
-### La decisión
-
-Al principio, los documentos de justificación (`DECISIONES.md`) y de preparación
-(`GUIA_DEFENSA.md`) estaban dentro del repositorio público. Se decidió que **el repositorio público
-contenga solo el entregable** (código, datos, tablero y su documentación técnica), y que el material
-interno del equipo (justificaciones, guion, banco de preguntas, pendientes) viva en un
-**repositorio privado**.
-
-### Por qué no bastaba con borrar los archivos
-
-Si solo se borran en un commit nuevo, **siguen en el historial**. Cualquiera puede abrir un commit
-anterior en GitHub y leerlos. Para que desaparezcan del repositorio hay que **reemplazar el
-historial**.
-
-### Cómo se hizo
-
-1. Los dos documentos se movieron a la carpeta privada `06_defensa/`. Fueron la base de esta guía y
-   hoy se conservan en [`archivo/`](archivo/README.md) como `DECISIONES_v1.md` y `GUIA_DEFENSA_v1.md`.
-2. Se limpiaron los README y el tablero de toda mención a la defensa y a la rúbrica. En el mismo
-   cambio se corrigieron las gráficas (sin zoom accidental, leyendas en HTML, redibujado).
-3. Se creó un historial nuevo de **un solo commit**:
-
-```bash
-git checkout --orphan limpio      # rama nueva SIN historial, con los archivos actuales
-git add -A                        # prepara todo (-A incluye también las eliminaciones)
-git commit -m "Proyecto Modulo 8: codigo del equipo y dashboard" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
-git branch -D main                # borra la rama main vieja (la del historial con la defensa)
-git branch -m main                # renombra "limpio" como main
-```
-
-| Comando | Qué hace |
-|---|---|
-| `checkout --orphan limpio` | Crea una rama "huérfana": empieza sin commits previos pero conserva los archivos de la carpeta |
-| `add -A` | Prepara todo: archivos nuevos, modificados **y eliminados** |
-| `commit -m "…" -m "…"` | Cada `-m` es un párrafo del mensaje; el segundo declara la coautoría de la IA (transparencia) |
-| `branch -D main` | Borra la rama vieja (`-D` fuerza el borrado aunque sus commits no estén en otra rama) |
-| `branch -m main` | Renombra la rama actual |
-
-Resultado local: commit **`8b1fc83`** con **20 archivos** (los 22 originales menos los dos
-documentos). `git log -- '*DECISIONES*' '*GUIA_DEFENSA*'` confirmó que no aparecen en ningún commit.
-
-4. **Subir reemplazando el historial de GitHub** (se hizo con la autorización explícita del dueño del
-   repositorio):
-
-```bash
-git push --force origin main
-# To https://github.com/pitirringo/futbol-apuestas.git
-#  + 42e80a5...8b1fc83 main -> main (forced update)
-```
-
-- Un push normal se habría rechazado porque los historiales no coinciden. `--force` le indica a
-  GitHub que reemplace su historial por el local.
-- **Es irreversible del lado de GitHub.** Por eso se pidió confirmación antes. Solo es seguro cuando
-  nadie más ha trabajado sobre el historial viejo; aquí nadie lo había clonado todavía. Si alguien
-  tuviera una copia vieja, tendría que volver a clonar el repositorio.
-- La variante más prudente es `git push --force-with-lease`, que se niega a sobrescribir si alguien
-  subió algo que no tienes.
-
-5. **Restaurar el vínculo con la rama remota.** La rama se creó de nuevo, así que perdió su
-   *upstream*:
-
-```bash
-git branch --set-upstream-to=origin/main main     # vuelve a ligar main con origin/main
-git status -sb                                    # ## main...origin/main
-```
 
 ### Verificación final
 
@@ -484,82 +418,9 @@ git status -sb                                    # ## main...origin/main
 | Flujo #35812702955 | ✓ en unos 2 minutos |
 | Sitio publicado | HTTP 200; redibujado corregido presente; zoom desactivado en todas las gráficas; **0 menciones** a DECISIONES o GUIA_DEFENSA |
 
-### Lo que queda por cerrar (y sus límites)
 
-- **Las dos ejecuciones viejas del flujo** (#35808804918 y #35809813982) siguen en la pestaña
-  Actions y enlazan a los commits viejos. GitHub puede mostrar un commit que ya no está en ninguna
-  rama si alguien entra por su enlace directo. Para cerrar ese hueco se borran esas ejecuciones.
-  Lo hace el dueño del repositorio: **Actions → en la lista de ejecuciones, el menú ⋯ al final de
-  la fila → Delete workflow run → Yes, permanently delete this workflow run**. Borrar la ejecución
-  también borra su *artifact* (la copia vieja del sitio). **Ojo:** dentro de una ejecución, el menú
-  ⋯ solo ofrece *Delete all logs*, que borra los registros pero deja la ejecución y su enlace al
-  commit.
-- En la computadora, los commits viejos siguen accesibles con `git reflog` (respaldo local) al
-  menos 30 días; después, Git los elimina solo en su limpieza periódica.
-- **Límite honesto:** reescribir el historial no borra copias que alguien ya haya descargado. Aquí el
-  repositorio llevaba menos de una hora publicado y nadie lo había clonado.
 
-## 14.13 Paso 11: el repositorio privado del equipo
-
-Este repositorio (el de esta guía) se crea igual que el público, con tres diferencias: es
-**Private**, no tiene flujo de Actions ni Pages, y se comparte **solo con el equipo**.
-
-**En Chrome (lo hace el dueño de la cuenta):**
-1. **New** → Repository name `futbol-apuestas-defensa` → **Private** → sin README, sin
-   `.gitignore`, sin licencia → **Create repository**.
-
-**En la terminal (carpeta `06_defensa`):**
-
-```bash
-git init -b main
-git add .
-git status                   # revisar la lista antes de guardar
-git commit -m "Guia de estudio del proyecto (privada)"
-git remote add origin https://github.com/pitirringo/futbol-apuestas-defensa.git
-git push -u origin main      # usa las mismas credenciales ya guardadas
-```
-
-El `.gitignore` de este repositorio deja fuera los archivos de sesión de R (`.Rhistory`, `.RData`,
-`.Rproj.user/`) y `equivalencias_R/probabilidades_prueba.rds`. Ese último lo genera
-`02_modelo_poisson.R` y lo usa `03_mercado.R`: por eso los scripts se corren en orden.
-
-**Compartir solo con el equipo:**
-1. En el repositorio: **Settings → Collaborators → Add people** → usuario de GitHub o correo de
-   cada integrante → **Add to repository**. GitHub puede pedir confirmar la identidad del dueño; eso
-   lo hace él.
-2. Cada integrante recibe una invitación por correo (o en github.com/notifications) y la **acepta**.
-3. **Quién lo ve:** solo el dueño y los colaboradores invitados. No aparece en búsquedas ni en el
-   perfil público, y quien no esté invitado recibe un error 404 al abrir la dirección. Si alguien
-   deja de ser colaborador, pierde el acceso.
-
-**Cómo lo descarga cada integrante:**
-
-```bash
-git clone https://github.com/pitirringo/futbol-apuestas-defensa.git
-```
-
-Su propio Git Credential Manager le pedirá iniciar sesión con **su** cuenta, que debe estar
-invitada. Sin Git, también sirve **Code → Download ZIP** desde la página del repositorio.
-
-## 14.14 Cómo trabajar de aquí en adelante (ambos repositorios)
-
-```bash
-git pull                     # 1. traer lo que otros subieron ANTES de editar
-# ... editar archivos ...
-git status                   # 2. ver qué cambió
-git add .                    # 3. preparar
-git commit -m "Mensaje claro de qué cambió"
-git push                     # 4. subir (en el público, esto relanza el flujo y republica el tablero)
-```
-
-- **Si `git push` se rechaza con `fetch first` o `non-fast-forward`:** alguien subió cambios antes.
-  Corre `git pull` y luego `git push`.
-- **Si `git pull` avisa de un conflicto** (dos personas cambiaron las mismas líneas): Git marca el
-  archivo con `<<<<<<<`, `=======` y `>>>>>>>`. Se deja la versión correcta, se borran las marcas y
-  se hace `git add` y `git commit`.
-- **Nunca usar `--force` en un repositorio compartido** sin acordarlo con el equipo.
-
-## 14.15 Equivalencias con RStudio y con lo visto en clase
+## 14.12 Equivalencias con RStudio y con lo visto en clase
 
 | Lo que hicimos (terminal) | En RStudio (botones) | Con paquetes de R |
 |---|---|---|
