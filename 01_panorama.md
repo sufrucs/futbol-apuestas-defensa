@@ -2,7 +2,7 @@
 
 [← Índice](README.md) · [Siguiente: contexto y datos →](02_contexto_y_datos.md)
 
-## La historia en un minuto
+## Resumen
 
 Las casas de apuestas publican **cuotas** para cada partido, y de una cuota se puede deducir una
 **probabilidad** (si la cuota de que gane el local es 2.00, el mercado le asigna ≈ 50 %). Nos
@@ -44,11 +44,11 @@ flowchart LR
 
 | Parte | Integrantes | Entregables |
 |---|---|---|
-| Código | (equipo de Código) | `Limpieza de datos.ipynb`, `wc_predictor.py`, `Analisis.ipynb`, reporte técnico en LaTeX |
-| Dashboard/página | César Garduño y compañero(a) | Tablero en Quarto, repositorio público y publicación en GitHub Pages |
-| Reporte | (equipo de Reporte) | Reporte breve que se envía por correo |
+| Código | Dani y Edu | `Limpieza de datos.ipynb`, `wc_predictor.py`, `Analisis.ipynb`, reporte técnico en LaTeX |
+| Dashboard/página | César y Max | Tablero en Quarto, repositorio público y publicación en GitHub Pages |
+| Reporte | Fer y Erika | Reporte breve que se envía por correo |
 
-> Importante: aunque el trabajo se dividió, **cualquiera** puede recibir preguntas de cualquier parte.
+
 
 ## Dónde está cada cosa
 
