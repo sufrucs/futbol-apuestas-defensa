@@ -2,13 +2,8 @@
 
 [← Banco de preguntas](17_banco_de_preguntas.md) · [Índice](README.md) · [Glosario →](glosario.md)
 
-> **Solo para el equipo.** Son detalles del trabajo propio que un evaluador podría notar. Conviene
-> corregirlos o acordarlos **antes de enviar el reporte (lunes 28 de septiembre de 2026)**.
 
-Lo positivo primero: **el análisis es reproducible y consistente.** Las métricas del notebook se
-reproducen a 6 decimales (en Python y en R), la caché de variables se reconstruye idéntica, no hay
-fuga de información en la construcción de variables y el tablero se construye desde cero en los
-servidores de GitHub con las mismas cifras.
+
 
 ## 18.1 Hallazgos en el código y el reporte
 
@@ -26,8 +21,6 @@ servidores de GitHub con las mismas cifras.
 | C10 | Documentación | `Analisis.ipynb` menciona un `Prueba.ipynb` "que se conserva sin modificaciones", pero no está en la carpeta | Incluirlo o quitar la mención | Código | Pendiente |
 | C11 | Repositorio | Para que GitHub Actions construya el tablero, el repositorio debe incluir `Codigo/proyecto_mod_8` con los dos CSV | — | — | **Resuelto** (22-sep) |
 
-**Si el equipo de Código corrige C1, C3, C5 o C10 en el repositorio público**, cada push reconstruye
-el tablero. La pestaña *Reproducibilidad* avisa si alguna de las 15 cifras cambia.
 
 ## 18.2 Decisiones que el equipo debe tomar
 
@@ -39,29 +32,4 @@ el tablero. La pestaña *Reproducibilidad* avisa si alguna de las 15 cifras camb
 | **URL de la visualización en el reporte** | https://pitirringo.github.io/futbol-apuestas/ | Ponerla en la portada o el resumen del reporte, junto con la del repositorio |
 | **Nombres del equipo visibles en el tablero y el repositorio público** | Mantener o retirar | Confirmar con cada integrante que está de acuerdo |
 
-## 18.3 Lista de verificación antes del lunes 28
 
-**Repositorios**
-- [ ] Borrar las dos ejecuciones viejas del flujo en Actions (#35808804918 y #35809813982) ([cap. 14](14_publicacion_en_github.md)).
-- [ ] Crear el repositorio privado `futbol-apuestas-defensa` y subir esta guía.
-- [ ] Invitar al equipo como colaboradores en el repositorio privado (y en el público, si el equipo de Código va a subir correcciones).
-- [ ] Cada integrante acepta la invitación y puede abrir los dos repositorios.
-
-**Código y reporte**
-- [ ] C1, C3, C5 y C10 corregidos (o documentados como "no utilizado").
-- [ ] C2 y C7 corregidos en `main.tex`.
-- [ ] Pregunta, hipótesis y elección de M0 redactadas igual en reporte y tablero.
-- [ ] URL del tablero y del repositorio en el reporte.
-- [ ] Lista de integrantes en el correo de entrega.
-
-**Exposición (1 o 6 de octubre)**
-- [ ] Cada integrante estudió la guía (ruta de estudio en el [índice](README.md)).
-- [ ] Dos ensayos cronometrados del [guion](16_guion_exposicion.md).
-- [ ] Todos contestaron el [banco de preguntas](17_banco_de_preguntas.md) en voz alta.
-- [ ] Respaldo sin internet preparado.
-
-## 18.4 Registro de cambios de esta guía
-
-| Fecha | Cambio |
-|---|---|
-| 22-sep-2026 | Primera versión como repositorio privado: 18 capítulos, glosario y 5 scripts de R verificados. Reemplaza a `DECISIONES.md` y `GUIA_DEFENSA.md`, que estaban en el repositorio público y se retiraron (versiones anteriores en `archivo/`) |
