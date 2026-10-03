@@ -1,8 +1,8 @@
 # =============================================================================
 # 02_modelo_poisson.R — Los modelos M0 y M4 del proyecto, escritos en R
 #
-# Equivale a Analisis.ipynb, secciones 3 a 6 y 8 (Python + statsmodels):
-#   - partición temporal entrenamiento / validación / prueba
+# Equivale a Analisis.ipynb, secciones 4 a 7 y 9 (Python + statsmodels):
+#   - partición temporal entrenamiento / validación / prueba (al final de la §5)
 #   - dos regresiones de Poisson (goles del local y goles del visitante)
 #   - probabilidades 1X2 a partir de los goles esperados
 #   - LogLoss, MAE, dispersión de Pearson y VIF
@@ -22,9 +22,10 @@ ruta <- function(archivo) {
   if (file.exists(local)) local else paste(RUTA_WEB, archivo, sep = "/")
 }
 
-# --- 1. Datos y partición temporal (notebook §3) -----------------------------
+# --- 1. Datos y partición temporal (notebook, final de §5) --------------------
 # premier_training_data.csv: una fila por partido con las variables PREVIAS al partido
-# (Elo, goles ajustados, forma, tiros) y los goles que realmente ocurrieron.
+# (Elo, goles promedio de la temporada, forma, tiros) y los goles que realmente ocurrieron.
+# Python la construyó con los valores calibrados en la §5: K = 15 (Elo) y k = 0 (shrinkage).
 variables <- read_csv(ruta("premier_training_data.csv"), show_col_types = FALSE)
 
 entrenamiento <- variables |> filter(Date <  as.Date("2024-08-01"))
@@ -33,7 +34,7 @@ prueba        <- variables |> filter(Date >= as.Date("2025-08-01"))
 cat(sprintf("Entrenamiento %d · validación %d · prueba %d partidos\n\n",
             nrow(entrenamiento), nrow(validacion), nrow(prueba)))
 
-# --- 2. Regresiones de Poisson (notebook §4-5) -------------------------------
+# --- 2. Regresiones de Poisson (notebook §4 y §6) ----------------------------
 # Python (statsmodels):
 #   X = sm.add_constant(datos[columnas]); X["elo_diff"] = X["elo_diff"] / 400
 #   sm.GLM(datos["home_goals"], X, family=sm.families.Poisson()).fit()
@@ -45,8 +46,8 @@ m0_visita <- glm(away_goals ~ I(elo_diff / 400) + gf_away + ga_home,
 
 cat("Coeficientes M0, goles del local:\n");     print(round(coef(m0_local), 4))
 cat("Coeficientes M0, goles del visitante:\n"); print(round(coef(m0_visita), 4))
-stopifnot(all(abs(coef(m0_local)  - c(-0.3864, 0.4082, 0.3338, 0.2158)) < 5e-5))
-stopifnot(all(abs(coef(m0_visita) - c(-0.3009, -0.4870, 0.2101, 0.1589)) < 5e-5))
+stopifnot(all(abs(coef(m0_local)  - c(0.0433, 0.6283, 0.1678, 0.0778)) < 5e-5))
+stopifnot(all(abs(coef(m0_visita) - c(0.0264, -0.6854, 0.1079, 0.0281)) < 5e-5))
 cat("OK: mismos coeficientes que statsmodels.\n\n")
 
 # Tabla completa como la de statsmodels (coef, error estándar, z, p-valor):
@@ -66,7 +67,7 @@ m4_visita <- glm(away_goals ~ I(elo_diff / 400) + gf_away + ga_home + form_gf_aw
                    shots_for_away + shots_against_home + sot_for_away + sot_against_home,
                  family = poisson, data = entrenamiento)
 
-# --- 3. VIF (notebook §6) ----------------------------------------------------
+# --- 3. VIF (notebook §7) ----------------------------------------------------
 # Python usa statsmodels.variance_inflation_factor sobre la matriz X: para cada variable j,
 # regresión lineal de X_j contra las demás y VIF = 1 / (1 - R²). Aquí, lo mismo con lm().
 vif_manual <- function(datos, columnas) {
@@ -80,7 +81,12 @@ vif_manual <- function(datos, columnas) {
 cols_m4_local <- c("elo_diff", "gf_home", "ga_away", "form_gf_home", "form_ga_away",
                    "shots_for_home", "shots_against_away", "sot_for_home", "sot_against_away")
 cat("VIF de M4 (ecuación del local), igual que en el notebook:\n")
-print(round(sort(vif_manual(entrenamiento, cols_m4_local), decreasing = TRUE), 3))
+vif_m4 <- vif_manual(entrenamiento, cols_m4_local)
+print(round(sort(vif_m4, decreasing = TRUE), 3))
+# Python (tablero): dispersión 0.996399 / 1.036394; VIF máximo 5.560371 (sot_for_home)
+stopifnot(abs(dispersion(m0_local) - 0.996399) < 1e-6, abs(dispersion(m0_visita) - 1.036394) < 1e-6,
+          abs(max(vif_m4) - 5.560371) < 1e-6)
+cat("OK: misma dispersión y mismo VIF que Python.\n")
 # Nota: car::vif(m4_local) da otra versión (ponderada por el GLM), con valores parecidos
 # pero no idénticos; el notebook usa la versión sin ponderar, que es la que reproduce vif_manual.
 
@@ -120,10 +126,12 @@ tabla <- rbind(
   "M0 prueba"     = evaluar(m0_local, m0_visita, prueba),
   "M4 prueba"     = evaluar(m4_local, m4_visita, prueba)
 )
-cat("\nMétricas (comparar con el notebook: 0.983690, 0.975296, 1.030556, 1.034434):\n")
+cat("\nMétricas (comparar con el notebook: 0.989547, 0.978612, 1.033076, 1.036739):\n")
 print(round(tabla, 6))
-stopifnot(abs(tabla["M0 prueba", "LogLoss"] - 1.030556) < 1e-6,
-          abs(tabla["M4 validación", "LogLoss"] - 0.975296) < 1e-6)
+stopifnot(abs(tabla["M0 validación", "LogLoss"] - 0.989547) < 1e-6,
+          abs(tabla["M4 validación", "LogLoss"] - 0.978612) < 1e-6,
+          abs(tabla["M0 prueba", "LogLoss"] - 1.033076) < 1e-6,
+          abs(tabla["M4 prueba", "LogLoss"] - 1.036739) < 1e-6)
 cat("OK: mismos LogLoss que Python.\n")
 
 # Guarda las probabilidades de prueba para 03_mercado.R

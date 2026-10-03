@@ -1,7 +1,7 @@
 # =============================================================================
 # 03_mercado.R — Las cuotas como probabilidades y la comparación contra el modelo, en R
 #
-# Equivale a Analisis.ipynb §7-8 (cargar_cuotas, comparar_con_mercado) y a los
+# Equivale a Analisis.ipynb §8-9 (cargar_cuotas, comparar_con_mercado) y a los
 # complementos del tablero (referencia ingenua, bootstrap).
 # Requiere haber corrido antes 02_modelo_poisson.R (usa probabilidades_prueba.rds).
 #
@@ -27,7 +27,7 @@ resultado <- function(d) ifelse(d$home_goals > d$away_goals, 1L,
 logloss_partido <- function(P, y) -log(P[cbind(seq_along(y), y)])
 y <- resultado(prueba)
 
-# --- 1. Cuotas -> probabilidad implícita (notebook §7) -----------------------
+# --- 1. Cuotas -> probabilidad implícita (notebook §8) -----------------------
 # Python: pd.read_csv(..., usecols=CLAVES + CUOTAS) y un merge por fecha y equipos.
 cuotas <- read_csv(ruta("E0_consolidado.csv"), show_col_types = FALSE) |>
   select(Date, HomeTeam, AwayTeam, AvgH, AvgD, AvgA)
@@ -42,7 +42,7 @@ P_mercado <- brutas / rowSums(brutas)
 
 cat(sprintf("Margen promedio de las casas en prueba: %.2f %% (notebook: 5.84 %%)\n", 100 * margen))
 cat(sprintf("LogLoss del mercado en prueba: %.6f (notebook: 1.020000)\n", mean(logloss_partido(P_mercado, y))))
-cat(sprintf("LogLoss del modelo M0 en prueba: %.6f (notebook: 1.030556)\n\n", mean(logloss_partido(P_m0, y))))
+cat(sprintf("LogLoss del modelo M0 en prueba: %.6f (notebook: 1.033076)\n\n", mean(logloss_partido(P_m0, y))))
 
 # --- 2. Referencia ingenua ----------------------------------------------------
 # Poisson con los goles promedio del entrenamiento, igual para todos los partidos.
@@ -54,12 +54,21 @@ ll_ingenua <- mean(logloss_partido(P_ingenua, y))
 ll_m0 <- mean(logloss_partido(P_m0, y))
 ll_mercado <- mean(logloss_partido(P_mercado, y))
 cat(sprintf("LogLoss de la referencia ingenua: %.4f (tablero: 1.0868)\n", ll_ingenua))
-cat(sprintf("Parte de la mejora del mercado que logra M0: %.1f %% (tablero: 84 %%)\n\n",
+cat(sprintf("Parte de la mejora del mercado que logra M0: %.1f %% (tablero: 80 %%)\n\n",
             100 * (ll_ingenua - ll_m0) / (ll_ingenua - ll_mercado)))
 
 # --- 3. Aciertos ----------------------------------------------------------------
 cat(sprintf("Aciertos: M0 %.1f %% · mercado %.1f %% · siempre local %.1f %%\n\n",
             100 * mean(max.col(P_m0) == y), 100 * mean(max.col(P_mercado) == y), 100 * mean(y == 1)))
+
+# Verificación contra Python (notebook §8-9 y tablero). Son cálculos deterministas: deben coincidir.
+stopifnot(abs(100 * margen - 5.836375) < 1e-6,
+          abs(ll_mercado - 1.020000) < 1e-6, abs(ll_m0 - 1.033076) < 1e-6, abs(ll_ingenua - 1.086791) < 1e-6,
+          abs((ll_ingenua - ll_m0) / (ll_ingenua - ll_mercado) - 0.804230) < 1e-6,
+          abs(mean(max.col(P_m0) == y) - 0.479714) < 1e-6,        # 201 de 419
+          abs(mean(max.col(P_mercado) == y) - 0.489260) < 1e-6,   # 205 de 419
+          abs(mean(y == 1) - 0.415274) < 1e-6)                    # 174 de 419
+cat("OK: mismo margen, LogLoss, fracción de la mejora y aciertos que Python.\n\n")
 
 # --- 4. Bootstrap de la diferencia M0 - mercado ---------------------------------
 # Remuestrear partidos con reemplazo 10,000 veces y ver cómo varía la diferencia promedio.
@@ -69,6 +78,6 @@ dif <- logloss_partido(P_m0, y) - logloss_partido(P_mercado, y)
 medias <- replicate(10000, mean(sample(dif, replace = TRUE)))
 ic <- quantile(medias, c(0.025, 0.975))
 cat(sprintf("M0 - mercado en prueba: %+.4f · IC 95 %% [%+.4f, %+.4f]\n", mean(dif), ic[1], ic[2]))
-cat("(El tablero reporta +0.0106 [-0.0044, +0.0254]; los extremos varían en la cuarta cifra\n",
+cat("(El tablero reporta +0.0131 [-0.0005, +0.0264]; los extremos varían en la cuarta cifra\n",
     " porque R y Python generan números aleatorios distintos, pero la conclusión es la misma:\n",
-    " en prueba sola el intervalo incluye el cero.)\n", sep = "")
+    " en prueba sola el intervalo incluye el cero, aunque por muy poco.)\n", sep = "")

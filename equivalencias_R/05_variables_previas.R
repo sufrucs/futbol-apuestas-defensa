@@ -3,7 +3,8 @@
 #
 # Equivale a wc_predictor.season_stats() y wc_predictor.recent_form() (Python).
 # Calcula las variables del primer partido de la base de modelación (Liverpool vs Norwich,
-# 9 de agosto de 2019) y las compara con premier_training_data.csv.
+# 9 de agosto de 2019) y las del segundo partido de Liverpool (en Southampton, 17 de agosto),
+# donde ya se nota k = 0, y las compara con premier_training_data.csv.
 #
 #   Rscript equivalencias_R/05_variables_previas.R
 # =============================================================================
@@ -32,8 +33,16 @@ desde_equipo <- function(partidos, equipo) {
          puerta_c = ifelse(es_local, partidos$AST, partidos$HST))
 }
 
-# --- season_stats(): promedio de la temporada actual contraído hacia la anterior --
-promedios_ajustados <- function(historico, equipo, fecha, k = 10) {
+# --- season_stats(): promedio de la temporada actual, mezclado con la referencia previa --
+# Python: season_stats(df, team, as_of_date, k=SHRINKAGE_K), con SHRINKAGE_K = 0 (calibrado en
+# Analisis.ipynb §5; la versión anterior usaba k = 10). Peso de la temporada actual = n / (n + k):
+#   - n = 0 (antes del primer partido de la temporada): no hay datos actuales y se usa la referencia
+#     previa (temporada anterior del equipo o, si no jugó en Premier, promedio de la liga).
+#   - n >= 1 con k = 0: peso = n / n = 1, así que se usa sólo el promedio de la temporada en curso,
+#     sin mezcla. Con k = 10, los primeros partidos se habrían mezclado con la referencia previa.
+# (Python tiene además un respaldo histórico para cuando no hay temporada anterior en la base;
+# desde 2019 no hace falta.)
+promedios_ajustados <- function(historico, equipo, fecha, k = 0) {
   previo <- historico |> filter(Date < fecha)                     # sólo el pasado
   anio <- if (as.integer(format(fecha, "%m")) >= 8) as.integer(format(fecha, "%Y")) else
           as.integer(format(fecha, "%Y")) - 1                      # la temporada empieza el 1 de agosto
@@ -55,7 +64,7 @@ promedios_ajustados <- function(historico, equipo, fecha, k = 10) {
   n <- nrow(actual)
   if (n == 0) return(c(gf = gf_previo, ga = ga_previo))
   s <- desde_equipo(actual, equipo)
-  peso <- n / (n + k)                                               # peso de la temporada actual
+  peso <- n / (n + k)                                               # peso de la temporada actual (1 si k = 0)
   c(gf = peso * mean(s$gf) + (1 - peso) * gf_previo,
     ga = peso * mean(s$ga) + (1 - peso) * ga_previo)
 }
@@ -77,11 +86,24 @@ print(round(forma_reciente(historico, "Liverpool", fecha), 4))
 cat("Norwich (visitante, recién ascendido):\n"); print(round(promedios_ajustados(historico, "Norwich", fecha), 4))
 print(round(forma_reciente(historico, "Norwich", fecha), 4))
 
-# Comparación contra la caché que generó Python
-cache <- read_csv(ruta("premier_training_data.csv"), show_col_types = FALSE)[1, ]
+# En ese primer partido n = 0 para los dos equipos, así que k no influye: con k = 0 y con k = 10
+# sale lo mismo. El efecto de k = 0 se ve desde el segundo partido: Liverpool, en Southampton,
+# ya jugó uno (4-1 a Norwich), n = 1 y peso = 1 -> GF = 4 y GA = 1, sólo la temporada en curso.
+fecha2 <- as.Date("2019-08-17")
+cat("\nLiverpool (visitante) en su segundo partido, n = 1, con k = 0:\n")
+print(round(promedios_ajustados(historico, "Liverpool", fecha2), 4))
+cat("Lo mismo con k = 10 (versión anterior): 1/11 de la temporada actual y 10/11 de la previa:\n")
+print(round(promedios_ajustados(historico, "Liverpool", fecha2, k = 10), 4))
+
+# Comparación contra la caché que generó Python (construida con K = 15 y k = 0)
+cache <- read_csv(ruta("premier_training_data.csv"), show_col_types = FALSE)
+primero <- cache[1, ]                                                  # Liverpool vs Norwich
+segundo <- cache |> filter(Date == fecha2, AwayTeam == "Liverpool")     # Southampton vs Liverpool
 r <- c(promedios_ajustados(historico, "Liverpool", fecha)["gf"],
        forma_reciente(historico, "Liverpool", fecha)[c("gf", "tiros_f")],
-       forma_reciente(historico, "Norwich", fecha)["ga"])
-p <- c(cache$gf_home, cache$form_gf_home, cache$shots_for_home, cache$form_ga_away)
-stopifnot(all(abs(r - p) < 1e-9))
+       forma_reciente(historico, "Norwich", fecha)["ga"],
+       promedios_ajustados(historico, "Liverpool", fecha2))
+p <- c(primero$gf_home, primero$form_gf_home, primero$shots_for_home, primero$form_ga_away,
+       segundo$gf_away, segundo$ga_away)
+stopifnot(nrow(segundo) == 1, all(abs(r - p) < 1e-9))
 cat("\nOK: mismas variables que la caché de Python.\n")

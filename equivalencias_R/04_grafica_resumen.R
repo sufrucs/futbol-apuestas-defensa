@@ -17,7 +17,7 @@ logloss <- data.frame(
   predictor = rep(c("Mercado (cuotas de apertura)", "Modelo base M0 · 3 variables",
                     "Modelo completo M4 · 9 variables"), times = 2),
   periodo = rep(c("Validación 2024/25", "Prueba 2025/26 – sep 2026"), each = 3),
-  logloss = c(0.970552, 0.983690, 0.975296, 1.020000, 1.030556, 1.034434),
+  logloss = c(0.970552, 0.989547, 0.978612, 1.020000, 1.033076, 1.036739),
   ingenua = rep(c(1.079361, 1.086791), each = 3)   # referencia ingenua: validación, prueba
 )
 # Mejora = LogLoss de la referencia ingenua - LogLoss del predictor (más es mejor)

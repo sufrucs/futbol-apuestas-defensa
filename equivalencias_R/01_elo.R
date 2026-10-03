@@ -1,7 +1,7 @@
 # =============================================================================
 # 01_elo.R — El sistema Elo del proyecto, escrito en R
 #
-# Equivale a wc_predictor.build_elo() (Python). Recorre los 9,450 partidos en orden
+# Equivale a wc_predictor.build_elo() (Python). Recorre los 9,540 partidos en orden
 # cronológico y actualiza el rating de ambos equipos después de cada uno.
 # Al final comprueba que los ratings coinciden con los que imprime Python.
 #
@@ -22,7 +22,8 @@ ruta <- function(archivo) {
 }
 
 ELO_INICIAL <- 1500   # Python: ELO_INIT = 1500
-K <- 30               # Python: ELO_K = 30
+K <- 15               # Python: ELO_K = 15, calibrado en Analisis.ipynb §5 (la versión anterior usaba 30)
+                      # Con K más chico cada partido mueve menos el rating: más estable, menos ruido de rachas.
 
 # Probabilidad "esperada" de que A le gane a B según la diferencia de ratings.
 # Python: def expected_score(r_a, r_b): return 1 / (1 + 10 ** ((r_b - r_a) / 400))
@@ -56,13 +57,14 @@ ranking <- tibble(equipo = names(elo), elo = round(unname(elo), 2)) |> arrange(d
 cat("Top 10 del Elo al 14-sep-2026 (después del último partido):\n")
 print(head(ranking, 10), n = 10)
 
-# Verificación contra Python (ranking que imprime wc_predictor.py al importarse)
-python <- c("Arsenal" = 1833.29, "Man City" = 1807.88, "Man United" = 1679.95,
-            "Bournemouth" = 1659.96, "Liverpool" = 1656.03)
+# Verificación contra Python: ratings de wc_predictor.build_elo(load_history()) con K = 15
+# (la versión vigente de wc_predictor.py ya no imprime el ranking al importarse).
+python <- c("Arsenal" = 1787.12, "Man City" = 1779.19, "Liverpool" = 1683.74,
+            "Man United" = 1638.49, "Aston Villa" = 1625.20)
 diferencias <- abs(round(elo[names(python)], 2) - python)
 stopifnot(all(diferencias < 0.006))
 cat("\nOK: los ratings de R coinciden con los de Python a 2 decimales.\n")
 
-# Ejemplo numérico para estudiar: Arsenal (1833) recibe a Man City (1808)
+# Ejemplo numérico para estudiar: Arsenal (1787) recibe a Man City (1779)
 cat(sprintf("\nProbabilidad esperada de Arsenal vs Man City según Elo: %.3f\n",
             esperado(elo[["Arsenal"]], elo[["Man City"]])))
