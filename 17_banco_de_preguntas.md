@@ -17,7 +17,7 @@
 > [cap. 19](19_decisiones_y_alternativas.md) y [cap. 20](20_el_reporte_entregado.md). Las marcadas como
 > *cálculo propio* o *comprobación de la guía* se hicieron **después de la entrega**: no están en el
 > notebook, el reporte ni el tablero, y se dicen sólo si preguntan, aclarando que son posteriores. Las
-> preguntas 101 a 113 (sección N) son nuevas.
+> preguntas 101 a 113 (sección N) y la 64 bis (sección H) son nuevas.
 
 ---
 
@@ -574,6 +574,21 @@ Un método para medir la incertidumbre: se calcula la diferencia de pérdida par
 reemplazo, se promedia y se repite 10,000 veces (semilla 2026). Los percentiles 2.5 y 97.5 forman el
 intervalo de 95 %. Si no incluye el cero, la diferencia es distinguible del azar.
 → [cap. 9](09_evaluacion_y_validacion.md)
+</details>
+
+<details><summary><b>64 bis. ¿Por qué el tablero usa bootstrap si el modelo no lo usa?</b></summary>
+
+El modelo no necesita bootstrap para entrenarse ni para predecir; lo necesitan las conclusiones. El
+notebook da diferencias de LogLoss pequeñas, como 0.013 entre el modelo y el mercado en 419 partidos,
+y la pregunta es si son reales o suerte de la muestra. Remuestreamos los partidos 10,000 veces con
+reemplazo, recalculamos la diferencia en cada remuestreo y tomamos el 95 % central. Si ese intervalo
+no incluye el cero, la diferencia es real. Así sabemos que el modelo sí supera a la referencia
+ingenua, que con validación y prueba juntas el mercado sí supera al modelo, y que entre M0 y M4 las
+diferencias están dentro del ruido. No cambia ninguna cifra del modelo: sólo les pone barras de error.
+→ En el tablero: página **El modelo**, tarjeta "¿Son significativas las diferencias?" ·
+[cap. 9](09_evaluacion_y_validacion.md#99-son-significativas-las-diferencias-bootstrap),
+[13a.5.6](13a_codigo_datos_dashboard.md#13a56-_bootstrap-y-tabla_bootstrap),
+[D36](19_decisiones_y_alternativas.md#d36-bootstrap-pareado-por-partidos--razonada)
 </details>
 
 <details><summary><b>65. ¿Son significativas las diferencias?</b></summary>

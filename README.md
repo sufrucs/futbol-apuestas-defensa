@@ -27,7 +27,7 @@
 | 14 | [Publicación en GitHub](14_publicacion_en_github.md) | Git, GitHub, GitHub Actions y Pages, paso a paso, con cada comando, hasta la versión final | "¿Cómo se publicó? ¿Cómo lo reproduzco?" |
 | 15 | [Limitaciones y extensiones](15_limitaciones_y_extensiones.md) | Qué no hace el modelo y cómo se podría mejorar | "¿Cuáles son las limitaciones?" |
 | 16 | [Guion de la exposición](16_guion_exposicion.md) | 5 minutos cronometrados, qué mostrar y transiciones | La exposición misma |
-| 17 | [Banco de preguntas](17_banco_de_preguntas.md) | 113 preguntas probables con respuesta, para autoevaluarse (las 101–113 son nuevas: calibración, alternativas, reporte y publicación) | Las 2 preguntas del jurado |
+| 17 | [Banco de preguntas](17_banco_de_preguntas.md) | 114 preguntas probables con respuesta, para autoevaluarse (las 101–113 y la 64 bis son nuevas: calibración, alternativas, reporte, publicación y el bootstrap del tablero) | Las 2 preguntas del jurado |
 | 18 | [Hallazgos y pendientes del equipo](18_hallazgos_y_pendientes.md) | Detalles del código y de los documentos que un evaluador podría notar | — |
 | 19 | [Decisiones y alternativas](19_decisiones_y_alternativas.md) | Las 50 decisiones del proyecto: qué alternativas había, por qué se eligió cada una y cuáles se probaron de verdad | "¿Por qué Poisson y no otro modelo? ¿Por qué Quarto?" |
 | 20 | [El reporte entregado](20_el_reporte_entregado.md) | `Reporte.pdf` sección por sección, de dónde sale cada cifra y las preguntas que puede provocar | "¿Por qué la hipótesis se cumple sólo en parte?" |
